@@ -1,8 +1,10 @@
 using System.Data;
 using System.Security.Cryptography;
+using Newtonsoft.Json;
+using NotenAppConsoleSchueler.Database.Connection;
 using WebApplication1.Database.Connection;
 
-namespace WebApplication1.Database;
+namespace NotenAppConsoleSchueler.Migration;
 
 public class Migrator
 {
@@ -31,8 +33,7 @@ public class Migrator
             "CREATE TABLE IF NOT EXISTS migration (filename varchar not null unique, hash varchar not null, createdAt datetime);",
             false
         );
-
-        FileInfo[] scriptFiles = new DirectoryInfo("./Migration/scripts").GetFiles("*.sql");
+        FileInfo[] scriptFiles = new DirectoryInfo(System.IO.Directory.GetCurrentDirectory() + "/scripts").GetFiles("*.sql");
 
         DataSet d = DatabaseService.GetDatabase().SelectSqlData("select filename, hash as createdAt from migration");
         List<dbMigrationEntity> entities = new List<dbMigrationEntity>();

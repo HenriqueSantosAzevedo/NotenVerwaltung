@@ -1,9 +1,11 @@
 using System.Data;
-using KlassenBester.Database.Exception;
 using KlassenBester.Database.SqLiteDatabase;
-using Newtonsoft.Json;
+using NotenAppConsoleSchueler.Database.Exception;
+using NotenAppConsoleSchueler.Migration;
+using WebApplication1.Database;
+using WebApplication1.Database.Connection;
 
-namespace WebApplication1.Database.Connection;
+namespace NotenAppConsoleSchueler.Database.Connection;
 
 public class DatabaseService
 {
@@ -18,7 +20,7 @@ public class DatabaseService
             return;   
         }
 
-        _database = new GenericDatabase(connectionString);
+        _database = new GenericDatabase.GenericDatabase(connectionString);
     }
     
     ~DatabaseService() {  

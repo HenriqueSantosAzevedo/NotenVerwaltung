@@ -1,10 +1,9 @@
-using WebApplication1.Attribute;
-using WebApplication1.ORM.Wrapper;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
-namespace WebApplication1.Entitiy;
+namespace NotenAppConsoleSchueler.ORM.Entity;
 
 [Table("noteArt")]
-public class NotenArt : Entity
+public class NotenArt : Wrapper.Entity
 {
     [Column("note_art_id")]
     [ID]

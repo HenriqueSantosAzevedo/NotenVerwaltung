@@ -1,6 +1,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
+using NotenAppConsoleSchueler.ORM.Repository;
 using WebApplication1.Database;
 using WebApplication1.Database.Connection;
 

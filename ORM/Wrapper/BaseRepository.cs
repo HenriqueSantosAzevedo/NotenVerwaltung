@@ -1,10 +1,14 @@
 using System.Data;
 using System.Data.SQLite;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using WebApplication1.Attribute;
+using NotenAppConsoleSchueler.Database.Connection;
+using NotenAppConsoleSchueler.Database.Exception;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 using WebApplication1.Database.Connection;
 
-namespace WebApplication1.ORM.Wrapper;
+namespace NotenAppConsoleSchueler.ORM.Wrapper;
 
 public interface IBaseRepository
 {
@@ -16,12 +20,13 @@ public abstract class BaseRepository<T, IDT>
     where IDT : new()
 {
     private readonly ParsedEntity _parsedEntity;
+    private readonly IDatabase _db = DatabaseService.GetDatabase();
 
     public BaseRepository()
     {
         if (RepositoryHolder.GetRepostitoryByType(typeof(T)) == null)
             RepositoryHolder.AddRepository(this);
-        _parsedEntity = ((Entity)Activator.CreateInstance(typeof(T))!).createEntityTree()!;
+        _parsedEntity = ((Entity)Activator.CreateInstance(typeof(T))!).CreateEntityTree()!;
     }
 
     private string GetFieldNames(ParsedEntity parsedEntity)
@@ -77,7 +82,7 @@ public abstract class BaseRepository<T, IDT>
         DataTable table;
         try
         {
-            table = DatabaseService.GetDatabase().SelectSqlData(v).Tables[0];
+            table = _db.SelectSqlData(v).Tables[0];
         }
         catch (SQLiteException e)
         {
@@ -88,13 +93,31 @@ public abstract class BaseRepository<T, IDT>
         return ResponseBuilder.BuildList<T>(table, _parsedEntity);
     }
 
-    public List<T> FindWhere(String whereClause)
+    static bool IsValidInput(string input)
     {
+        // Regex pattern to allow alphabets, digits, _, -, ,, and .
+        string pattern = @"^[a-zA-Z0-9_\-,.]+$";
+
+        // Check if the input matches the pattern
+        return Regex.IsMatch(input, pattern);
+    }
+
+    public List<T> FindWhere(String whereClause, params object[] data)
+    {
+        foreach (var o in data)
+        {
+            if (o is string s && !IsValidInput(s))
+            {
+                throw new SQLInjectionException();
+            }
+            whereClause = StringUtils.ReplaceFirst(whereClause, "?", o.ToString()!);
+        }
+        
         var v = $"{FindAllStruc()} where {whereClause}";
         DataTable table;
         try
         {
-            table = DatabaseService.GetDatabase().SelectSqlData(v).Tables[0];
+            table = _db.SelectSqlData(v).Tables[0];
         }
         catch (SQLiteException e)
         {
@@ -105,49 +128,39 @@ public abstract class BaseRepository<T, IDT>
         return ResponseBuilder.BuildList<T>(table, _parsedEntity);
     }
 
-    private void CheckNotNull(T entity)
+    private object valueParser(T entity, SimpleField field)
     {
-        bool valid = _parsedEntity.Fields.Any(customField =>
-        {
-            string _field = "";
-            if (customField.GetType() == typeof(SimpleField))
-            {
-                SimpleField s = (SimpleField)customField;
-                _field = s.PropertyName;
-            } else if (customField.GetType() == typeof(JoinedEntity))
-            {
-                JoinedEntity p = (JoinedEntity)customField;
-                _field = p.JoinInfo.JoinOn;
-            }
-
-            if (customField.IsNotNull) return false;
-            Console.WriteLine(entity.getValue(_field) is null);
-            return entity.getValue(_field) is null;
-        });
-
-        if (!valid)
-        {
-            throw new Exception($"Entity {entity.GetType().Name} is not Valid");
-        }
+        object? v = entity.getValue(field.PropertyName);
+        if (v is null)
+            return $"null";
+        if (field.Type == typeof(DateTime)) return ((DateTime)v).Ticks;
+        if (field.StorageItem.Type.StartsWith("varchar")) return $"\'{v}\'";
+        return v;
     }
 
-
-    public IDT? save(T entity)
+    public long save(T entity)
     {
         var foreignFields = new Dictionary<string, object>();
         var fields = _parsedEntity.Fields.Where(field => field.GetType() == typeof(SimpleField)).Cast<SimpleField>()
             .ToList();
+        
+        long id = entity.getId<long>();
+        if (id < 1)
+        {
+            var idColumn = _parsedEntity.ID.ColumnName;
+            id = Convert.ToInt64(_db
+                .SelectSqlData($"select max({idColumn}) + 1 as 'nextId' from {_parsedEntity.TableName}")
+                .Tables[0]
+                .Rows[0]
+                .ItemArray[0]
+            );
+
+            SimpleField sf = fields.First(field => field.Column.ColumnName == idColumn);
+            entity.setValue(sf.PropertyName, id);
+        }
 
         var values = fields
-            .Select(field =>
-            {
-                object? v = entity.getValue(field.PropertyName);
-                if (v is null)
-                    return $"null";
-
-                if (field.StorageItem.Type.StartsWith("varchar")) return $"\'{v}\'";
-                return v;
-            }).ToList();
+            .Select(field => valueParser(entity, field)).ToList();
 
         var joinedEntities = _parsedEntity.Fields
             .Where(field => field.GetType() == typeof(JoinedEntity))
@@ -158,7 +171,7 @@ public abstract class BaseRepository<T, IDT>
         joinedEntities.ForEach(field =>
         {
             OneToOne join = (OneToOne)field.JoinInfo;
-            if (join.ReferencedBy == ReferencedBy.CHILD)
+            if (join.ReferencedBy == ReferencedBy.THIS)
             {
                 var foreignField = field
                     .Fields
@@ -182,8 +195,11 @@ public abstract class BaseRepository<T, IDT>
         });
 
 
+        Console.WriteLine(JsonConvert.SerializeObject(foreignFields, Formatting.Indented));        
+        
         var columns = String.Join(", ", fields.Select(field => field.Column.ColumnName)) +
-                      (foreignFields.Keys.Count > 0 ?  $", {String.Join(", ", foreignFields.Keys)}" : "");
+                      (foreignFields.Keys.Count > 0 ? $", {String.Join(", ", foreignFields.Keys)}" : "");
+
         
         values.AddRange(foreignFields
             .Values
@@ -191,14 +207,14 @@ public abstract class BaseRepository<T, IDT>
                 {
                     if (v is null)
                         return $"null";
-
                     return v;
                 })
             .ToList()
         );
         
-        String query = $"insert into {_parsedEntity.TableName}({columns}) values ({String.Join(", ", values)})";
+        
+        String query = $"insert into {_parsedEntity.TableName}({columns}) values ({String.Join(", ", values)}) RETURNING {_parsedEntity.ID.ColumnName}";
         Console.WriteLine(query);
-        return default;
+        return Convert.ToInt64(_db.genericSqlCommand(query, false));
     }
 }

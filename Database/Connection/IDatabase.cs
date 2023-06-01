@@ -1,5 +1,6 @@
 using System.Data;
 using System.Data.Common;
+using NotenAppConsoleSchueler.ORM.Repository;
 
 namespace WebApplication1.Database.Connection;
 

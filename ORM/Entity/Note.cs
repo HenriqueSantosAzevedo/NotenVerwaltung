@@ -1,11 +1,10 @@
 using JetBrains.Annotations;
-using WebApplication1.Attribute;
-using WebApplication1.ORM.Wrapper;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
-namespace WebApplication1.Entitiy;
+namespace NotenAppConsoleSchueler.ORM.Entity;
 
 [Table("note")]
-public class Note : Entity
+public class Note : Wrapper.Entity
 {
     [Column("note_id")]
     [ID]

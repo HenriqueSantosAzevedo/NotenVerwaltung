@@ -1,11 +1,10 @@
 using JetBrains.Annotations;
-using WebApplication1.Attribute;
-using WebApplication1.ORM.Wrapper;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
-namespace WebApplication1.Entitiy;
+namespace NotenAppConsoleSchueler.ORM.Entity;
 
 [Table("ausbildungsjahr")]
-public class Ausbildungsjahr : Entity
+public class Ausbildungsjahr : Wrapper.Entity
 {
     [Column("ausbildungsjahr_id")]
     [ID]

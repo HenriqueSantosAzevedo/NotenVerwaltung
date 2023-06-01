@@ -3,6 +3,7 @@ using System.Text;
 using NotenAppConsoleSchueler.Database.Exception;
 using NotenAppConsoleSchueler.ORM.Entity;
 using NotenAppConsoleSchueler.ORM.Repository;
+using NotenAppConsoleSchueler.ORM.Wrapper;
 using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
 namespace NotenAppConsoleSchueler.Menu;
@@ -26,8 +27,6 @@ public class LoginView : Display
         Console.Write("Enter your password: ");
         string password = GetPassword();
         
-        Console.Write(password);
-
         Anmeldedatum anmeldedaten;
         try
         {
@@ -83,25 +82,7 @@ public class LoginView : Display
         } while (key.Key != ConsoleKey.Enter);
 
         Console.WriteLine(); // Move to the next line after pressing Enter
-        password = GetMD5Hash(password);
+        password = StringUtils.GetMD5Hash(password);
         return password;
-    }
-    
-    static string GetMD5Hash(string input)
-    {
-        using (MD5 md5 = MD5.Create())
-        {
-            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            byte[] hashBytes = md5.ComputeHash(inputBytes);
-
-            StringBuilder builder = new StringBuilder();
-
-            for (int i = 0; i < hashBytes.Length; i++)
-            {
-                builder.Append(hashBytes[i].ToString("x2"));
-            }
-
-            return builder.ToString();
-        }
     }
 }

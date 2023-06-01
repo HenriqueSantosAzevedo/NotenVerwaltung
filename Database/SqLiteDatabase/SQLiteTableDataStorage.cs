@@ -1,7 +1,9 @@
 using System.Data;
+using NotenAppConsoleSchueler.Database.Connection;
+using NotenAppConsoleSchueler.ORM.Repository;
+using NotenAppConsoleSchueler.ORM.Wrapper;
 using WebApplication1.Database;
 using WebApplication1.Database.Connection;
-using WebApplication1.ORM.Wrapper;
 
 namespace KlassenBester.Database.SqLiteDatabase;
 

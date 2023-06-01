@@ -1,7 +1,6 @@
 using JetBrains.Annotations;
-using WebApplication1.ORM.Wrapper;
 
-namespace WebApplication1.Attribute;
+namespace NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
 public class Table : System.Attribute
 {

@@ -1,6 +1,6 @@
-using WebApplication1.ORM.Wrapper;
+using NotenAppConsoleSchueler.ORM.Wrapper;
 
-namespace WebApplication1.Database;
+namespace NotenAppConsoleSchueler.ORM.Repository;
 
 public abstract class TableDataStorage
 {

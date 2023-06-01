@@ -1,12 +1,10 @@
 using JetBrains.Annotations;
-using WebApplication1.Attribute;
-using WebApplication1.ORM.Entity;
-using WebApplication1.ORM.Wrapper;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
-namespace WebApplication1.Entitiy;
+namespace NotenAppConsoleSchueler.ORM.Entity;
 
 [Table("klasse")]
-public class Klasse : Entity
+public class Klasse : Wrapper.Entity
 {
     [Column("klasse_id")]
     [UsedImplicitly]

@@ -1,6 +1,6 @@
 namespace NotenAppConsoleSchueler.ORM.Wrapper;
 
-public class RepositoryNotLoadedException
+public class RepositoryNotLoadedException : Exception
 {
     
 }

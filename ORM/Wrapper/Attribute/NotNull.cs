@@ -1,4 +1,4 @@
-namespace WebApplication1.Attribute;
+namespace NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
 public class NotNull : System.Attribute
 {

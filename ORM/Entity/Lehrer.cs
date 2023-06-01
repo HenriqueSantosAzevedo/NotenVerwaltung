@@ -1,12 +1,10 @@
 using JetBrains.Annotations;
-using WebApplication1.Attribute;
-using WebApplication1.ORM.Entity;
-using WebApplication1.ORM.Wrapper;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
-namespace WebApplication1.Entitiy;
+namespace NotenAppConsoleSchueler.ORM.Entity;
 
 [Table("lehrer")]
-public class Lehrer : Entity
+public class Lehrer : Wrapper.Entity
 {
     [Column("lehrer_id")]
     [ID]
@@ -27,7 +25,7 @@ public class Lehrer : Entity
     
     [OneToOne(primary: "anmeldung_id", foreign: "anmeldung_id")]
     [UsedImplicitly]
-    [Attribute.NotNull]
+    [NotenAppConsoleSchueler.ORM.Wrapper.Attribute.NotNull]
     public Anmeldedatum Anmeldedatum { get; set; }
     
     [Column("hat_administrative_rechte")]

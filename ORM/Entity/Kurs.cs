@@ -1,11 +1,10 @@
 using JetBrains.Annotations;
-using WebApplication1.Attribute;
-using WebApplication1.Entitiy;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
-namespace WebApplication1.ORM.Entity;
+namespace NotenAppConsoleSchueler.ORM.Entity;
 
 [Table("kurs")]
-public class Kurs : Wrapper.Entity
+public class Kurs : NotenAppConsoleSchueler.ORM.Wrapper.Entity
 {
     [OneToOne(primary: "lehrer_id", foreign: "lehrer_id")]
     [UsedImplicitly]
@@ -19,4 +18,7 @@ public class Kurs : Wrapper.Entity
     [Column("kurs_name")]
     [UsedImplicitly]
     public string KursName { get; set; }
+    
+    [OneToMany("kurs_id", "kurs_id")]
+    public List<Leistung> Leistungen { get; set; }
 }

@@ -1,8 +1,9 @@
 using JetBrains.Annotations;
-using WebApplication1.Attribute;
+using NotenAppConsoleSchueler.ORM.Repository;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 using WebApplication1.Database;
 
-namespace WebApplication1.ORM.Wrapper;
+namespace NotenAppConsoleSchueler.ORM.Wrapper;
 
 public interface ICustomField
 {

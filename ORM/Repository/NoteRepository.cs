@@ -1,7 +1,7 @@
-using WebApplication1.Entitiy;
-using WebApplication1.ORM.Wrapper;
+using NotenAppConsoleSchueler.ORM.Entity;
+using NotenAppConsoleSchueler.ORM.Wrapper;
 
-namespace WebApplication1.ORM.Repository;
+namespace NotenAppConsoleSchueler.ORM.Repository;
 
 public class NoteBaseRepository : BaseRepository<Note, long>
 {

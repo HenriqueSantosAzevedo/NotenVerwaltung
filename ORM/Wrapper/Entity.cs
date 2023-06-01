@@ -1,20 +1,16 @@
-// ReSharper disable InconsistentNaming
-
 using System.Reflection;
-using JetBrains.Annotations;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Newtonsoft.Json;
-using WebApplication1.Attribute;
+using NotenAppConsoleSchueler.Database.Connection;
+using NotenAppConsoleSchueler.ORM.Repository;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 using WebApplication1.Database;
-using WebApplication1.Database.Connection;
 
-namespace WebApplication1.ORM.Wrapper;
+namespace NotenAppConsoleSchueler.ORM.Wrapper;
 
 public abstract class Entity
 {
     private Dictionary<Type, ParsedEntity> _parsedEntities = new();
     
-    private List<PropertyInfo> filteredProperties()
+    private List<PropertyInfo> FilteredProperties()
     {
         return GetType()
             .GetProperties()
@@ -26,7 +22,7 @@ public abstract class Entity
             .ToList();
     }
 
-    public ParsedEntity? createEntityTree(List<Type>? parentEntities = null, Join? joinInfo = null, bool isNotNull = false)
+    public ParsedEntity? CreateEntityTree(List<Type>? parentEntities = null, Join? joinInfo = null, bool isNotNull = false)
     {
         if (parentEntities == null) parentEntities = new List<Type>();
         if (parentEntities.Contains(GetType()))
@@ -44,7 +40,7 @@ public abstract class Entity
             throw new Exception($"Entity {GetType().Name} needs to have exactly one Table Attribute");
         parsedEntity.TableName = attributes.First().TableName;
         
-        foreach (PropertyInfo propertyInfo in filteredProperties())
+        foreach (PropertyInfo propertyInfo in FilteredProperties())
         {
             Type propertyType = propertyInfo.PropertyType;
             if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(List<>))
@@ -63,7 +59,7 @@ public abstract class Entity
                 parsedEntity
                     .Fields
                     .Add(
-                        ((Entity)Activator.CreateInstance(propertyType)!).createEntityTree(new List<Type>(parentEntities), j, notNullAttribute != null)!
+                        ((Entity)Activator.CreateInstance(propertyType)!).CreateEntityTree(new List<Type>(parentEntities), j, notNullAttribute != null)!
                     );
                 continue;
             }

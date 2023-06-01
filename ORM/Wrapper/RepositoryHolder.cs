@@ -1,13 +1,11 @@
-using Newtonsoft.Json;
-
-namespace WebApplication1.ORM.Wrapper;
+namespace NotenAppConsoleSchueler.ORM.Wrapper;
 
 public class RepositoryHolder
 {
     private static readonly Dictionary<Type, IBaseRepository> _repositories = new();
 
     public static void AddRepository<T, IDT>(BaseRepository<T, IDT> baseRepository)
-        where T : Entity
+        where T : NotenAppConsoleSchueler.ORM.Wrapper.Entity
         where IDT : new()
     {
         Type? baseType = baseRepository.GetType().BaseType;

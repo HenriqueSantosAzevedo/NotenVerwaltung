@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Data;
 using System.Reflection;
-using WebApplication1.Attribute;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
-namespace WebApplication1.ORM.Wrapper;
+namespace NotenAppConsoleSchueler.ORM.Wrapper;
 
 public abstract class ResponseBuilder
 {
@@ -25,7 +25,7 @@ public abstract class ResponseBuilder
     private static void ParseSimpleFields(
         List<SimpleField> simpleFields,
         IGrouping<object, Dictionary<string, object>> grouping,
-        Entity entity
+        NotenAppConsoleSchueler.ORM.Wrapper.Entity entity
     )
     {
         simpleFields.ForEach(field =>
@@ -54,7 +54,7 @@ public abstract class ResponseBuilder
     }
 
     private static T ParseEntity<T>(IGrouping<object, Dictionary<string, object>> grouping, ParsedEntity parsedEntity)
-        where T : Entity
+        where T : NotenAppConsoleSchueler.ORM.Wrapper.Entity
     {
         var entity = (T)Activator.CreateInstance(parsedEntity.Type)!;
 
@@ -94,7 +94,7 @@ public abstract class ResponseBuilder
     }
 
 
-    public static List<T> BuildList<T>(DataTable dataTable, ParsedEntity entity) where T : Entity
+    public static List<T> BuildList<T>(DataTable dataTable, ParsedEntity entity) where T : NotenAppConsoleSchueler.ORM.Wrapper.Entity
     {
         List<IGrouping<object, Dictionary<string, object>>> sqlResponse = DataTableSystemToTextJson(dataTable)
             .GroupBy(objects => objects[$"{entity.Abbreviation}.{entity.ID.ColumnName!}"])

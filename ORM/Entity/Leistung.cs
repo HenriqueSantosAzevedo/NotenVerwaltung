@@ -1,10 +1,9 @@
-using WebApplication1.Attribute;
-using WebApplication1.Entitiy;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
-namespace WebApplication1.ORM.Entity;
+namespace NotenAppConsoleSchueler.ORM.Entity;
 
 [Table("leistung")]
-public class Leistung : Wrapper.Entity
+public class Leistung : NotenAppConsoleSchueler.ORM.Wrapper.Entity
 {
     [Column("leistungId")]
     [ID]

@@ -1,12 +1,10 @@
-using System.ComponentModel;
 using JetBrains.Annotations;
-using WebApplication1.Attribute;
-using WebApplication1.ORM.Wrapper;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
-namespace WebApplication1.Entitiy;
+namespace NotenAppConsoleSchueler.ORM.Entity;
 
 [Table("bildungsgang")]
-public class Bildungsgang : Entity
+public class Bildungsgang : Wrapper.Entity
 {
     [Column("bildungsgang_id")]
     [ID]

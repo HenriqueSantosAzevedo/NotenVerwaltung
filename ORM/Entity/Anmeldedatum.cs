@@ -1,11 +1,10 @@
 using JetBrains.Annotations;
-using WebApplication1.Attribute;
-using WebApplication1.ORM.Wrapper;
+using NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
-namespace WebApplication1.Entitiy;
+namespace NotenAppConsoleSchueler.ORM.Entity;
 
 [Table("anmeldung")]
-public class Anmeldedatum : Entity
+public class Anmeldedatum : Wrapper.Entity
 {
     [Column("anmeldung_id")]
     [ID]

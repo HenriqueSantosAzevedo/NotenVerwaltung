@@ -1,8 +1,7 @@
 using System.Reflection;
 using Newtonsoft.Json;
-using WebApplication1.ORM.Wrapper;
 
-namespace WebApplication1.Attribute;
+namespace NotenAppConsoleSchueler.ORM.Wrapper.Attribute;
 
 public class Repository : System.Attribute
 {

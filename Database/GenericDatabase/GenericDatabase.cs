@@ -1,12 +1,12 @@
-using System;  
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using Microsoft.CSharp.RuntimeBinder;
-using WebApplication1.Database;
+using NotenAppConsoleSchueler.ORM.Repository;
 using WebApplication1.Database.Connection;
 
 //https://www.c-sharpcorner.com/article/cdataservice-a-generic-database-access-class/
+
+namespace NotenAppConsoleSchueler.Database.GenericDatabase;
 
 public class GenericDatabase : IDatabase
 {
@@ -20,7 +20,7 @@ public class GenericDatabase : IDatabase
       
       public GenericDatabase() {}
       public GenericDatabase(string ConnectionString) {  
-                  this.m_ConnectionString = ConnectionString;  
+            this.m_ConnectionString = ConnectionString;  
       }
       ~GenericDatabase() {  
             this.CloseDataSource();  
@@ -33,14 +33,14 @@ public class GenericDatabase : IDatabase
                   try
                   {
                         m_Connection.Open();
-                  } catch (Exception e) {  
+                  } catch (System.Exception e) {  
                         throw e;  
                   }
             } else if (m_Connection.State != ConnectionState.Open) {  
                   m_Connection.ConnectionString = m_ConnectionString;  
                   try {
                         m_Connection.Open();  
-                  } catch (Exception e)
+                  } catch (System.Exception e)
                   {
                         throw e;
                   }  
@@ -100,7 +100,7 @@ public class GenericDatabase : IDatabase
             try {  
                   da.InsertCommand = new SqlCommand(InsertString, (SqlConnection) OpenDataSource());  
                   da.InsertCommand.ExecuteNonQuery();  
-            } catch (Exception e) {  
+            } catch (System.Exception e) {  
                   throw e;  
             } finally {  
                   if (MustClose) CloseDataSource();  
@@ -114,7 +114,7 @@ public class GenericDatabase : IDatabase
             try {  
                   da.DeleteCommand = new SqlCommand(DeleteString, (SqlConnection) OpenDataSource());  
                   da.DeleteCommand.ExecuteNonQuery();  
-            } catch (Exception e) {  
+            } catch (System.Exception e) {  
                   throw e;  
             } finally {  
                   if (MustClose) CloseDataSource();  
@@ -128,7 +128,7 @@ public class GenericDatabase : IDatabase
             try {  
                   da.UpdateCommand = new SqlCommand(UpdateString, (SqlConnection) OpenDataSource());  
                   da.UpdateCommand.ExecuteNonQuery();  
-            } catch (Exception e) {  
+            } catch (System.Exception e) {  
                   throw e;  
             } finally {  
                   if (MustClose) CloseDataSource();  
@@ -137,4 +137,5 @@ public class GenericDatabase : IDatabase
       public void UpdateSQLData(string UpdateString) {  
             UpdateSQLData(UpdateString, false);  
       }  
-} //Class   
+}
+//Class   
